@@ -2,7 +2,7 @@
 
 DITTI is a Farcaster bot that serves as a cast line interface (CLI), offering a variety of functions to improve user experience on the Farcaster platform. The bot is written in Python and utilizes the Farcaster-py library, OpenAI GPT, Google Cloud Translate, and Text2Img.
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/coming_soon)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/YjcrsJ?referralCode=T61Pcu)
 
 ## Features
 
