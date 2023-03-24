@@ -1,0 +1,83 @@
+[tool.poetry]
+name = "ditti-bot"
+version = "0.1.0"
+description = "ditti bot"
+authors = ["Alex Paden"]
+license = "MIT"
+packages = [{include = "ditti"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<4.0"
+farcaster = "^0.7.5"
+fonts = "^0.0.3"
+Pillow = "^9.4.0"
+protobuf = "^4.22.0"
+pytest = "^7.2.1"
+python-dotenv = "^0.21.1"
+requests = "^2.28.2"
+supabase = "^1.0.0"
+google-cloud-translate = "^3.11.0"
+font-amatic-sc = "^0.0.4"
+openai = "^0.27.2"
+pyupgrade = "^3.3.1"
+isort = "^5.12.0"
+black = "^23.1.0"
+pytest-cov = "^4.0.0"
+coverage-badge = "^1.1.0"
+flake8 = "^6.0.0"
+mypy = "^1.1.1"
+types-pillow = "^9.4.0.17"
+types-requests = "^2.28.11.16"
+autoflake = "^2.0.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+# https://github.com/psf/black
+target-version = ["py310"]
+line-length = 88
+color = true
+
+exclude = '''
+/(
+    \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+    | env
+    | venv
+)/
+'''
+
+[tool.isort]
+# https://github.com/timothycrosley/isort/
+py_version = 310
+line_length = 88
+
+known_typing = ["typing", "types", "typing_extensions", "mypy", "mypy_extensions"]
+sections = ["FUTURE", "TYPING", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+include_trailing_comma = true
+profile = "black"
+multi_line_output = 3
+indent = 4
+color_output = true
+
+[tool.flake8]
+ignore = ['E231', 'E241']
+per-file-ignores = [
+    '__init__.py:F401',
+]
+max-line-length = 88
+count = true
+
+[tool.coverage-badge]
+skip-covered = true

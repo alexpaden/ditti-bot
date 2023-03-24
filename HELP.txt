@@ -1,0 +1,30 @@
+======================
+ DITTI BOT HELP GUIDE
+======================
+
+@ditti <command>
+
+=======
+ Usage
+=======
+
+@ditti thread           convert a thread of posts by the same author into image
+@ditti gpt <question>   creates an instance of chatgpt, subsequent replies do not require the command
+@ditti gpt^             create an instance of chatgpt using # of thread replies for context, default 1 [i.e. @ditti gpt^4]
+@ditti translate        translate one cast or thread of foreign language casts by user into English
+@ditti hash             reply to cast with this to get the hash of that cast 
+@ditti help             display all commands and information
+
+
+All commands:
+
+    thread, gpt, gpt^, translate, hash, share, 
+    help
+
+
+
+
+--visit ditti.xyz for other useful tools--
+
+
+
