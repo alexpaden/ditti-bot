@@ -9,12 +9,16 @@ class Bookmark:
     TITLE_PATTERN = r"@ditti\sbookmark(.*?)(?:—|--)\s*tag|(?:@ditti\sbookmark\s)(.*)"
     TAG_PATTERN = r"(?:—|--)\s*tag\s(\w+)"
 
-    def __init__(self, fcc: Warpcast, supabase):
+    def __init__(self, fcc: Warpcast, supabase, DEV_MODE):
         self.fcc = fcc
         self.supabase = supabase
+        self.DEV_MODE = DEV_MODE
 
     def start_bookmark(self, call_cast):
         parent = Parent(fid=call_cast.author.fid, hash=call_cast.hash)
+
+        if call_cast.parent_hash is None:
+            return ("Please reply to the cast you want to bookmark.", parent)
 
         parsed_command = self.parse_bookmark_command(call_cast.text)
         if parsed_command["title"] is None:
@@ -24,7 +28,16 @@ class Bookmark:
                 parent,
             )
 
-        text = self.save_to_supabase(parsed_command, call_cast)
+        if self.DEV_MODE is False:
+            self.save_to_supabase(parsed_command, call_cast)
+
+        text = f"'{parsed_command['title']}' was saved to your bookmarks! 🔖"
+        trim_length = len(text) - 300
+        if trim_length > 0:
+            text = (
+                f"'{parsed_command['title'][:-trim_length-3]}...'"
+                + " was saved to your bookmarks! 🔖"
+            )
 
         return text, parent
 
@@ -41,6 +54,10 @@ class Bookmark:
                 else None
             )
         )
+
+        if title == "":
+            title = None
+
         tag = tag_match.group(1) if tag_match else None
 
         return {"title": title, "tag": tag}
@@ -90,16 +107,7 @@ class Bookmark:
                     .execute()
                 )
 
-            cast_response = (
-                f"'{parsed_command['title']}' was saved to your bookmarks! 🔖"
-            )
-            trim_length = len(cast_response) - 300
-            if trim_length > 0:
-                cast_response = (
-                    f"'{parsed_command['title'][:-trim_length-3]}...'"
-                    + " was saved to your bookmarks! 🔖"
-                )
+            return
 
-            return cast_response
         except Exception as e:
             logging.error(e)

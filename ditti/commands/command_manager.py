@@ -31,7 +31,7 @@ class Commands:
         self.thread = Thread(fcc)
         self.gpt = Gpt(fcc, self.bot_username, GPT_COM)
         self.hash = Hash(fcc)
-        self.bookmark = Bookmark(fcc, self.supabase)
+        self.bookmark = Bookmark(fcc, self.supabase, DEV_MODE)
 
     def handle_command(self, notif):
         command_mapping = {
