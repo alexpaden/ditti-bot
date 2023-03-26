@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from farcaster.models import Parent
 
+from ditti.commands.bookmark import Bookmark
 from ditti.commands.gpt import Gpt
 from ditti.commands.hash import Hash
 from ditti.commands.thread import Thread
@@ -11,13 +12,14 @@ from ditti.commands.translate import TranslatorBotCommand
 
 load_dotenv()
 
+DEV_MODE = bool(os.getenv("DEV_MODE") == "True")
 TRANSLATE_COM = "translate"
 THREAD_COM = "thread"
 GPT_COM = "gpt"
 GPT_REPLY_COM = "gpt_reply"
 HASH_COM = "hash"
 HELP_COM = "help"
-DEV_MODE = bool(os.getenv("DEV_MODE") == "True")
+BOOKMARK_COM = "bookmark"
 
 
 class Commands:
@@ -29,6 +31,7 @@ class Commands:
         self.thread = Thread(fcc)
         self.gpt = Gpt(fcc, self.bot_username, GPT_COM)
         self.hash = Hash(fcc)
+        self.bookmark = Bookmark(fcc, self.supabase, DEV_MODE)
 
     def handle_command(self, notif):
         command_mapping = {
@@ -38,6 +41,7 @@ class Commands:
             HASH_COM: self.handle_hash_command,
             HELP_COM: self.handle_help_command,
             GPT_REPLY_COM: self.handle_gpt_reply_command,
+            BOOKMARK_COM: self.handle_bookmark_command,
         }
 
         command_prefix = f"{self.bot_username} "
@@ -74,6 +78,9 @@ class Commands:
 
     def handle_help_command(self, notif):
         self.handle_generic_command(notif, HELP_COM, self.perform_help_command)
+
+    def handle_bookmark_command(self, notif):
+        self.handle_generic_command(notif, BOOKMARK_COM, self.perform_bookmark_command)
 
     def handle_gpt_reply_command(self, notif):
         self.handle_generic_command(
@@ -160,6 +167,12 @@ class Commands:
         reply, parent = self.hash.start_hash(notif.content.cast)
         self.post_to_farcaster(text=reply, parent=parent)
         logging.info("Hash command completed")
+
+    def perform_bookmark_command(self, notif):
+        logging.info("Performing bookmark command")
+        reply, parent = self.bookmark.start_bookmark(notif.content.cast)
+        self.post_to_farcaster(text=reply, parent=parent)
+        logging.info("Bookmark command completed")
 
     def perform_help_command(self, notif):
         logging.info("Performing help command")
