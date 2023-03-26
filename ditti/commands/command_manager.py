@@ -3,8 +3,8 @@ import os
 
 from dotenv import load_dotenv
 from farcaster.models import Parent
-from ditti.commands.bookmark import Bookmark
 
+from ditti.commands.bookmark import Bookmark
 from ditti.commands.gpt import Gpt
 from ditti.commands.hash import Hash
 from ditti.commands.thread import Thread
@@ -78,7 +78,7 @@ class Commands:
 
     def handle_help_command(self, notif):
         self.handle_generic_command(notif, HELP_COM, self.perform_help_command)
-        
+
     def handle_bookmark_command(self, notif):
         self.handle_generic_command(notif, BOOKMARK_COM, self.perform_bookmark_command)
 
@@ -167,7 +167,7 @@ class Commands:
         reply, parent = self.hash.start_hash(notif.content.cast)
         self.post_to_farcaster(text=reply, parent=parent)
         logging.info("Hash command completed")
-        
+
     def perform_bookmark_command(self, notif):
         logging.info("Performing bookmark command")
         reply, parent = self.bookmark.start_bookmark(notif.content.cast)
