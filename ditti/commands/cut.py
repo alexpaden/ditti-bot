@@ -30,8 +30,9 @@ class Cut:
         img_url = img_urls[0]
         print(img_url)
         
-        self.save_to_supabase(parsed, call_cast, img_url)
-        
+        if self.DEV_MODE is False:
+            self.save_to_supabase(parsed, call_cast, img_url)
+            
         text= ""
         return text, parent
 
