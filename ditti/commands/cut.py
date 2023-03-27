@@ -20,19 +20,17 @@ class Cut:
         parent_cast = self.fcc.get_cast(call_cast.parent_hash).cast
 
         parsed = self.parse_cut_command(call_cast.text)
-        logging.info(parsed)
 
         img_urls = self.extract_img_urls(parent_cast.text)
         if not img_urls:
             return "No images found in parent cast", parent
 
         img_url = img_urls[0]
-        print(img_url)
 
         if self.DEV_MODE is False:
             self.save_to_supabase(parsed, call_cast, img_url)
 
-        text = ""
+        text = f"The photo was cut and saved successfully! 🖼️ 🎉 {img_url}"
         return text, parent
 
     def parse_cut_command(self, call_text):
