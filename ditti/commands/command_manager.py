@@ -85,7 +85,7 @@ class Commands:
 
     def handle_bookmark_command(self, notif):
         self.handle_generic_command(notif, BOOKMARK_COM, self.perform_bookmark_command)
-        
+
     def handle_cut_command(self, notif):
         self.handle_generic_command(notif, CUT_COM, self.perform_cut_command)
 
@@ -180,7 +180,7 @@ class Commands:
         reply, parent = self.bookmark.start_bookmark(notif.content.cast)
         self.post_to_farcaster(text=reply, parent=parent)
         logging.info("Bookmark command completed")
-        
+
     def perform_cut_command(self, notif):
         logging.info("Performing cut command")
         reply, parent = self.cut.start_cut(notif.content.cast)
