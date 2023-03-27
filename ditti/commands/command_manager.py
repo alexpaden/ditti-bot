@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from farcaster.models import Parent
 
 from ditti.commands.bookmark import Bookmark
+from ditti.commands.cut import Cut
 from ditti.commands.gpt import Gpt
 from ditti.commands.hash import Hash
 from ditti.commands.thread import Thread
@@ -20,6 +21,7 @@ GPT_REPLY_COM = "gpt_reply"
 HASH_COM = "hash"
 HELP_COM = "help"
 BOOKMARK_COM = "bookmark"
+CUT_COM = "cut"
 
 
 class Commands:
@@ -32,6 +34,7 @@ class Commands:
         self.gpt = Gpt(fcc, self.bot_username, GPT_COM)
         self.hash = Hash(fcc)
         self.bookmark = Bookmark(fcc, self.supabase, DEV_MODE)
+        self.cut = Cut(fcc, self.supabase, DEV_MODE)
 
     def handle_command(self, notif):
         command_mapping = {
@@ -42,6 +45,7 @@ class Commands:
             HELP_COM: self.handle_help_command,
             GPT_REPLY_COM: self.handle_gpt_reply_command,
             BOOKMARK_COM: self.handle_bookmark_command,
+            CUT_COM: self.handle_cut_command,
         }
 
         command_prefix = f"{self.bot_username} "
@@ -81,6 +85,9 @@ class Commands:
 
     def handle_bookmark_command(self, notif):
         self.handle_generic_command(notif, BOOKMARK_COM, self.perform_bookmark_command)
+        
+    def handle_cut_command(self, notif):
+        self.handle_generic_command(notif, CUT_COM, self.perform_cut_command)
 
     def handle_gpt_reply_command(self, notif):
         self.handle_generic_command(
@@ -173,6 +180,12 @@ class Commands:
         reply, parent = self.bookmark.start_bookmark(notif.content.cast)
         self.post_to_farcaster(text=reply, parent=parent)
         logging.info("Bookmark command completed")
+        
+    def perform_cut_command(self, notif):
+        logging.info("Performing cut command")
+        reply, parent = self.cut.start_cut(notif.content.cast)
+        self.post_to_farcaster(text=reply, parent=parent)
+        logging.info("Cut command completed")
 
     def perform_help_command(self, notif):
         logging.info("Performing help command")
