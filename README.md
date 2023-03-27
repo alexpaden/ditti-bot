@@ -25,6 +25,7 @@ To use DITTI, simply mention the bot with the desired command:
 - `@ditti hash`: Reply to a cast with this command to get the hash of that cast.
 - `@ditti help`: Display all commands and information.
 - `@ditti bookmark <title text> --tag <name>` Creates a bookmark of a cast using a Title description and optional category tag.
+- `@ditti cut <title> --tag <name>` Cuts an image from cast and saves it for gallery use with option title and tag.
 
 ## How to Use
 
