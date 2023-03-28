@@ -1,11 +1,12 @@
 import base64
 import os
+import re
+import urllib
 from io import BytesIO
 
+import emoji
 import requests
-
-# type: ignore
-from fonts.ttf import AmaticSCBold
+from bs4 import BeautifulSoup, Comment
 from PIL import Image, ImageDraw, ImageFont
 
 
@@ -15,144 +16,6 @@ class Text2Img:
 
     RGB_TO_COLOR_NAMES = {
         (0, 0, 0): ["Black"],
-        (0, 0, 128): ["Navy", "NavyBlue"],
-        (0, 0, 139): ["DarkBlue"],
-        (0, 0, 205): ["MediumBlue"],
-        (0, 0, 255): ["Blue"],
-        (0, 100, 0): ["DarkGreen"],
-        (0, 128, 0): ["Green"],
-        (0, 139, 139): ["DarkCyan"],
-        (0, 191, 255): ["DeepSkyBlue"],
-        (0, 206, 209): ["DarkTurquoise"],
-        (0, 250, 154): ["MediumSpringGreen"],
-        (0, 255, 0): ["Lime"],
-        (0, 255, 127): ["SpringGreen"],
-        (0, 255, 255): ["Cyan", "Aqua"],
-        (25, 25, 112): ["MidnightBlue"],
-        (30, 144, 255): ["DodgerBlue"],
-        (32, 178, 170): ["LightSeaGreen"],
-        (34, 139, 34): ["ForestGreen"],
-        (46, 139, 87): ["SeaGreen"],
-        (47, 79, 79): ["DarkSlateGray", "DarkSlateGrey"],
-        (50, 205, 50): ["LimeGreen"],
-        (60, 179, 113): ["MediumSeaGreen"],
-        (64, 224, 208): ["Turquoise"],
-        (65, 105, 225): ["RoyalBlue"],
-        (70, 130, 180): ["SteelBlue"],
-        (72, 61, 139): ["DarkSlateBlue"],
-        (72, 209, 204): ["MediumTurquoise"],
-        (75, 0, 130): ["Indigo"],
-        (85, 107, 47): ["DarkOliveGreen"],
-        (95, 158, 160): ["CadetBlue"],
-        (100, 149, 237): ["CornflowerBlue"],
-        (102, 205, 170): ["MediumAquamarine"],
-        (105, 105, 105): ["DimGray", "DimGrey"],
-        (106, 90, 205): ["SlateBlue"],
-        (107, 142, 35): ["OliveDrab"],
-        (112, 128, 144): ["SlateGray", "SlateGrey"],
-        (119, 136, 153): ["LightSlateGray", "LightSlateGrey"],
-        (123, 104, 238): ["MediumSlateBlue"],
-        (124, 252, 0): ["LawnGreen"],
-        (127, 255, 0): ["Chartreuse"],
-        (127, 255, 212): ["Aquamarine"],
-        (128, 0, 0): ["Maroon"],
-        (128, 0, 128): ["Purple"],
-        (128, 128, 0): ["Olive"],
-        (128, 128, 128): ["Gray", "Grey"],
-        (132, 112, 255): ["LightSlateBlue"],
-        (135, 206, 235): ["SkyBlue"],
-        (135, 206, 250): ["LightSkyBlue"],
-        (138, 43, 226): ["BlueViolet"],
-        (139, 0, 0): ["DarkRed"],
-        (139, 0, 139): ["DarkMagenta"],
-        (139, 69, 19): ["SaddleBrown"],
-        (143, 188, 143): ["DarkSeaGreen"],
-        (144, 238, 144): ["LightGreen"],
-        (147, 112, 219): ["MediumPurple"],
-        (148, 0, 211): ["DarkViolet"],
-        (152, 251, 152): ["PaleGreen"],
-        (153, 50, 204): ["DarkOrchid"],
-        (154, 205, 50): ["YellowGreen"],
-        (160, 82, 45): ["Sienna"],
-        (165, 42, 42): ["Brown"],
-        (169, 169, 169): ["DarkGray", "DarkGrey"],
-        (173, 216, 230): ["LightBlue"],
-        (173, 255, 47): ["GreenYellow"],
-        (175, 238, 238): ["PaleTurquoise"],
-        (176, 196, 222): ["LightSteelBlue"],
-        (176, 224, 230): ["PowderBlue"],
-        (178, 34, 34): ["Firebrick"],
-        (184, 134, 11): ["DarkGoldenrod"],
-        (186, 85, 211): ["MediumOrchid"],
-        (188, 143, 143): ["RosyBrown"],
-        (189, 183, 107): ["DarkKhaki"],
-        (192, 192, 192): ["Silver"],
-        (199, 21, 133): ["MediumVioletRed"],
-        (205, 92, 92): ["IndianRed"],
-        (205, 133, 63): ["Peru"],
-        (208, 32, 144): ["VioletRed"],
-        (210, 105, 30): ["Chocolate"],
-        (210, 180, 140): ["Tan"],
-        (211, 211, 211): ["LightGray", "LightGrey"],
-        (216, 191, 216): ["Thistle"],
-        (218, 112, 214): ["Orchid"],
-        (218, 165, 32): ["Goldenrod"],
-        (219, 112, 147): ["PaleVioletRed"],
-        (220, 20, 60): ["Crimson"],
-        (220, 220, 220): ["Gainsboro"],
-        (221, 160, 221): ["Plum"],
-        (222, 184, 135): ["Burlywood"],
-        (224, 255, 255): ["LightCyan"],
-        (230, 230, 250): ["Lavender"],
-        (233, 150, 122): ["DarkSalmon"],
-        (238, 130, 238): ["Violet"],
-        (238, 221, 130): ["LightGoldenrod"],
-        (238, 232, 170): ["PaleGoldenrod"],
-        (240, 128, 128): ["LightCoral"],
-        (240, 230, 140): ["Khaki"],
-        (240, 248, 255): ["AliceBlue"],
-        (240, 255, 240): ["Honeydew"],
-        (240, 255, 255): ["Azure"],
-        (244, 164, 96): ["SandyBrown"],
-        (245, 222, 179): ["Wheat"],
-        (245, 245, 220): ["Beige"],
-        (245, 245, 245): ["WhiteSmoke"],
-        (245, 255, 250): ["MintCream"],
-        (248, 248, 255): ["GhostWhite"],
-        (250, 128, 114): ["Salmon"],
-        (250, 235, 215): ["AntiqueWhite"],
-        (250, 240, 230): ["Linen"],
-        (250, 250, 210): ["LightGoldenrodYellow"],
-        (253, 245, 230): ["OldLace"],
-        (255, 0, 0): ["Red"],
-        (255, 0, 255): ["Magenta", "Fuchsia"],
-        (255, 20, 147): ["DeepPink"],
-        (255, 69, 0): ["OrangeRed"],
-        (255, 99, 71): ["Tomato"],
-        (255, 105, 180): ["HotPink"],
-        (255, 127, 80): ["Coral"],
-        (255, 140, 0): ["DarkOrange"],
-        (255, 160, 122): ["LightSalmon"],
-        (255, 165, 0): ["Orange"],
-        (255, 182, 193): ["LightPink"],
-        (255, 192, 203): ["Pink"],
-        (255, 215, 0): ["Gold"],
-        (255, 218, 185): ["PeachPuff"],
-        (255, 222, 173): ["NavajoWhite"],
-        (255, 228, 181): ["Moccasin"],
-        (255, 228, 196): ["Bisque"],
-        (255, 228, 225): ["MistyRose"],
-        (255, 235, 205): ["BlanchedAlmond"],
-        (255, 239, 213): ["PapayaWhip"],
-        (255, 240, 245): ["LavenderBlush"],
-        (255, 245, 238): ["Seashell"],
-        (255, 248, 220): ["Cornsilk"],
-        (255, 250, 205): ["LemonChiffon"],
-        (255, 250, 240): ["FloralWhite"],
-        (255, 250, 250): ["Snow"],
-        (255, 255, 0): ["Yellow"],
-        (255, 255, 224): ["LightYellow"],
-        (255, 255, 240): ["Ivory"],
         (255, 255, 255): ["White"],
     }
 
@@ -162,26 +25,147 @@ class Text2Img:
         for name in names
     )
 
-    # does not handle non-english characters
-    def convert(self, text: str, font_size=32, color="black", image_file=None):
-        font_name = AmaticSCBold
-        font = ImageFont.truetype(font_name, font_size, encoding="utf-8")
-        text = self.wrap_text(text, font)
-        w, h = font.getsize_multiline(text)
-        image = Image.new("RGBA", (w, int(h + h * 0.1)), (0, 0, 0, 0))
+    def remove_urls(self, text: str) -> str:
+        url_pattern = re.compile(
+            r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|"
+            r"[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+        )
+        return url_pattern.sub("", text)
+
+    def get_bionic_reading_formatted_text(self, text: str):
+        text = emoji.replace_emoji(text, replace="")
+        text = self.remove_urls(text)
+        api_key = os.getenv("BIONIC_KEY")
+        url = "https://bionic-reading1.p.rapidapi.com/convert"
+        content = urllib.parse.quote(text)
+        payload = (
+            f"content={content}&response_type=html&request_type=html&"
+            f"fixation=1&saccade=10"
+        )
+        headers = {
+            "content-type": "application/x-www-form-urlencoded",
+            "X-RapidAPI-Key": api_key,
+            "X-RapidAPI-Host": "bionic-reading1.p.rapidapi.com",
+        }
+
+        response = requests.post(url, data=payload, headers=headers)  # type: ignore
+
+        if response.status_code == 200:
+            return response.text
+        else:
+            raise ValueError("Failed to fetch Bionic Reading formatted text.")
+
+    def convert(
+        self,
+        text: str,
+        font_size=25,
+        color="black",
+        image_file=None,
+        padding=100,
+        desired_width=2000,
+    ):
+        text_2 = self.get_bionic_reading_formatted_text(text)
+        text_3 = self.extract_html(text_2)
+
+        # Load two font files
+        font_name_regular = "./ditti/helpers/fonts/SourceSansPro-Light.ttf"
+        font_name_bold = "./ditti/helpers/fonts/SourceSansPro-Regular.ttf"
+        font_regular = ImageFont.truetype(font_name_regular, font_size)
+        font_bold = ImageFont.truetype(font_name_bold, font_size)
+
+        # Wrap the text
+        wrapped_text = self.wrap_text(text_3, font_bold, desired_width)
+
+        # Create the image
+        w, h = self.get_multiline_text_size(wrapped_text, font_regular, font_bold)
+        image = Image.new(
+            "RGBA", (w + 2 * padding, int(h + h * 0.1) + 2 * padding), (255, 255, 255)
+        )
         draw = ImageDraw.Draw(image)
 
+        # Set the color
         if color not in self.COLOR_NAME_TO_RGB.keys():
             color = "black"
-        draw.text((0, 0), text, fill=color, font=font)
+
+        # Draw the text
+        current_x, current_y = padding, padding  # Add padding to starting position
+        for line in wrapped_text.split("\n"):
+            line_parts = re.split(r"(<b>|</b>)", line)
+            use_bold = False  # Initialize use_bold variable
+            for part in line_parts:
+                if part == "<b>":
+                    use_bold = True
+                elif part == "</b>":
+                    use_bold = False
+                else:
+                    font = font_bold if use_bold else font_regular
+                    draw.text((current_x, current_y), part, fill=color, font=font)
+                    current_x += font.getsize(part)[0]
+
+            current_y += font_regular.getsize(" ")[1]  # Move to next line
+            current_x = padding  # Reset x position to include padding
+
+        # Save the image
         if image_file is None:
             filename = text.replace(" ", "")
             image_file = "{}.png".format(filename)
+
         result = self.upload_imgur(image=image)
+        print(text_3)
+        print(result)
         return result
 
-    def wrap_text(self, text, font):
-        width = 500
+    def get_multiline_text_size(self, text, font_regular, font_bold):
+        max_w = 0
+        total_h = 0
+        for line in text.split("\n"):
+            line_parts = re.split(r"(<b>|</b>)", line)
+            line_w = 0
+            use_bold = False
+            for part in line_parts:
+                if part == "<b>":
+                    use_bold = True
+                elif part == "</b>":
+                    use_bold = False
+                else:
+                    font = font_bold if use_bold else font_regular
+                    line_w += font.getsize(part)[0]
+            max_w = max(max_w, line_w)
+            total_h += font_regular.getsize(" ")[1]
+
+        return max_w, total_h
+
+    def extract_html(self, html):
+        soup = BeautifulSoup(html, "html.parser")
+        container = soup.find("div", {"class": "bionic-reader-container"})
+        footer = container.find("div", {"class": "br-foot-node"})
+        if footer:
+            footer.extract()
+
+        for comment in container.find_all(text=lambda text: isinstance(text, Comment)):
+            comment.extract()
+
+        container_str = str(container)
+        container_str = container_str.replace(
+            '<div class="bionic-reader-container">', ""
+        )
+        container_str = container_str.replace("</div>", "")
+        container_str = container_str.replace("<b></b>", "")
+        container_str = container_str.replace("&amp;", "&")
+        container_str = container_str.replace("<br/>", "\n")
+
+        soup = BeautifulSoup(container_str, "html.parser")
+        bold_tags = soup.find_all("b")
+        text = ""
+        last_index = 0
+        for tag in bold_tags:
+            start_index = container_str.find(str(tag), last_index)
+            text += container_str[last_index:start_index] + "<b>" + tag.string + "</b>"
+            last_index = start_index + len(str(tag))
+        text += container_str[last_index:]
+        return text
+
+    def wrap_text(self, text, font, max_width):
         text_lines = []
         text_line: list[str] = []
         text = text.replace("\n", " [br] ")
@@ -193,12 +177,15 @@ class Text2Img:
                 text_lines.append(" ".join(text_line))
                 text_line = []
                 continue
-            text_line.append(word)
-            w, h = font.getsize(" ".join(text_line))
-            if w > width:
-                text_line.pop()
+
+            # Calculate the width of the line with the new word added
+            new_line_width = font.getsize(" ".join(text_line + [word]))[0]
+
+            if new_line_width > max_width:
                 text_lines.append(" ".join(text_line))
                 text_line = [word]
+            else:
+                text_line.append(word)
 
         if len(text_line) > 0:
             text_lines.append(" ".join(text_line))
