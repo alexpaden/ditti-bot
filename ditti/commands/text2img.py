@@ -111,8 +111,6 @@ class Text2Img:
             image_file = "{}.png".format(filename)
 
         result = self.upload_imgur(image=image)
-        print(text_3)
-        print(result)
         return result
 
     def get_multiline_text_size(self, text, font_regular, font_bold):
