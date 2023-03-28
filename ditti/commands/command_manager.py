@@ -8,6 +8,7 @@ from ditti.commands.bookmark import Bookmark
 from ditti.commands.cut import Cut
 from ditti.commands.gpt import Gpt
 from ditti.commands.hash import Hash
+from ditti.commands.text2img import Text2Img
 from ditti.commands.thread import Thread
 from ditti.commands.translate import TranslatorBotCommand
 
@@ -35,6 +36,7 @@ class Commands:
         self.hash = Hash(fcc)
         self.bookmark = Bookmark(fcc, self.supabase, DEV_MODE)
         self.cut = Cut(fcc, self.supabase, DEV_MODE)
+        self.text2img = Text2Img()
 
     def handle_command(self, notif):
         command_mapping = {
