@@ -194,7 +194,7 @@ class Commands:
         reply = (
             "Thanks for your interest in ditti bot! "
             "Tag @alexpaden for further assistance. "
-            "https://i.imgur.com/SAgKDJh.png"
+            "https://i.imgur.com/J7sh9ip.png"
         )
         parent = Parent(fid=notif.content.cast.author.fid, hash=notif.content.cast.hash)
         self.post_to_farcaster(text=reply, parent=parent)

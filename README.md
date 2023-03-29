@@ -18,14 +18,15 @@ To use DITTI, simply mention the bot with the desired command:
 
 ### Available Commands
 
-- `@ditti thread`: Convert a thread of posts by the same author into an image.
-- `@ditti gpt <question>`: Create an instance of ChatGPT, subsequent replies do not require the command.
-- `@ditti gpt^`: Create an instance of ChatGPT using the specified number of thread replies for context (default is 1), e.g. `@ditti gpt^4`.
-- `@ditti translate`: Translate a single cast or a thread of foreign language casts by a user into English.
-- `@ditti hash`: Reply to a cast with this command to get the hash of that cast.
-- `@ditti help`: Display all commands and information.
-- `@ditti bookmark <title text> --tag <name>` Creates a bookmark of a cast using a Title description and optional category tag.
-- `@ditti cut <title> --tag <name>` Cuts an image from cast and saves it for gallery use with option title and tag.
+- `@ditti thread` - Convert a thread of posts by the same author into an image.
+- `@ditti gpt <question>` - Create an instance of ChatGPT, subsequent replies do not require the command.
+- `ditti gpt* <question>` - Creates an instance of ChatGPT and provides and initially long-form response.
+- `@ditti gpt^` - Create an instance of ChatGPT using # of thread replies for context, default 1 (i.e. `@ditti gpt^4`, `@ditti gpt*^2`)
+- `@ditti translate` - Translate one cast or thread of foreign language casts by user into English.
+- `@ditti hash` - Reply to cast with this to get the hash of that cast.
+- `@ditti bookmark <title> --tag <name>` - Create a bookmark of a cast using a Title description and optional category tag.
+- `@ditti cut <title> --tag <name>` - Cuts an image from cast and saves it for gallery use with option title and tag.
+- `@ditti help` - Display all commands and information
 
 ## How to Use
 
