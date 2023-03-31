@@ -201,7 +201,7 @@ class Gpt:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=messages,
-            max_tokens=100,
+            max_tokens=500,
             temperature=0.65,
         )
 
@@ -218,8 +218,8 @@ class Gpt:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=messages,
-            max_tokens=750,
-            temperature=0.65,
+            max_tokens=100,
+            temperature=0.5,
         )
 
         summary = response.choices[0].message.content
