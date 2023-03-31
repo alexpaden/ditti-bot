@@ -88,11 +88,11 @@ class WhoIs:
         for i, address in enumerate(addresses, start=1):
             formatted_result += f"{i}. {address}\n"
 
-        formatted_result += f"\nand {len(domains)} web3 domains\n"
+        if domains is not None:
+            formatted_result += f"\nand {len(domains)} web3 domains\n"
 
-        for i, domain in enumerate(domains, start=1):
-            formatted_result += f"{i}. {domain['name']}\n"
-
+            for i, domain in enumerate(domains, start=1):
+                formatted_result += f"{i}. {domain['name']}\n"
         return formatted_result
 
     def split_result(self, formatted_result, max_length=320):
