@@ -26,6 +26,7 @@ To use DITTI, simply mention the bot with the desired command:
 - `@ditti hash` - Reply to cast with this to get the hash of that cast.
 - `@ditti bookmark <title> --tag <name>` - Create a bookmark of a cast using a Title description and optional category tag.
 - `@ditti cut <title> --tag <name>` - Cuts an image from cast and saves it for gallery use with option title and tag.
+- `@ditti whois <username, ens, address>` - returns a whois for the requested user, ens, or wallet address.
 - `@ditti help` - Display all commands and information
 
 ## How to Use
