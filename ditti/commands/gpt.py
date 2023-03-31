@@ -218,7 +218,7 @@ class Gpt:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=messages,
-            max_tokens=100,
+            max_tokens=1000,
             temperature=0.5,
         )
 
