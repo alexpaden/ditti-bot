@@ -1,7 +1,6 @@
 import logging
 import os
 
-from dotenv import load_dotenv
 from farcaster.models import Parent
 
 from ditti.commands.bookmark import Bookmark
@@ -11,8 +10,7 @@ from ditti.commands.hash import Hash
 from ditti.commands.text2img import Text2Img
 from ditti.commands.thread import Thread
 from ditti.commands.translate import TranslatorBotCommand
-
-load_dotenv()
+from ditti.commands.whois import WhoIs
 
 DEV_MODE = bool(os.getenv("DEV_MODE") == "True")
 TRANSLATE_COM = "translate"
@@ -23,6 +21,7 @@ HASH_COM = "hash"
 HELP_COM = "help"
 BOOKMARK_COM = "bookmark"
 CUT_COM = "cut"
+WHOIS_COM = "whois"
 
 
 class Commands:
@@ -37,6 +36,7 @@ class Commands:
         self.bookmark = Bookmark(fcc, self.supabase, DEV_MODE)
         self.cut = Cut(fcc, self.supabase, DEV_MODE)
         self.text2img = Text2Img()
+        self.whois = WhoIs(fcc)
 
     def handle_command(self, notif):
         command_mapping = {
@@ -48,6 +48,7 @@ class Commands:
             GPT_REPLY_COM: self.handle_gpt_reply_command,
             BOOKMARK_COM: self.handle_bookmark_command,
             CUT_COM: self.handle_cut_command,
+            WHOIS_COM: self.handle_whois_command,
         }
 
         command_prefix = f"{self.bot_username} "
@@ -90,6 +91,9 @@ class Commands:
 
     def handle_cut_command(self, notif):
         self.handle_generic_command(notif, CUT_COM, self.perform_cut_command)
+
+    def handle_whois_command(self, notif):
+        self.handle_generic_command(notif, WHOIS_COM, self.perform_whois_command)
 
     def handle_gpt_reply_command(self, notif):
         self.handle_generic_command(
@@ -147,6 +151,17 @@ class Commands:
         except Exception as e:
             self.handle_error(e, "Error while posting to farcaster")
 
+    def post_thread_to_farcaster(self, replies: list, parent: Parent):
+        try:
+            if DEV_MODE:
+                logging.info("Posting to farcaster (but dev mode)")
+            else:
+                for reply in replies:
+                    res = self.fcc.post_cast(text=reply, parent=parent)
+                    parent = res.cast.parent_hash
+        except Exception as e:
+            self.handle_error(e, "Error while posting to farcaster")
+
     def perform_translate_command(self, notif):
         logging.info("Performing translate command")
         reply, parent = self.translate.start_translate(notif.content.cast)
@@ -189,12 +204,18 @@ class Commands:
         self.post_to_farcaster(text=reply, parent=parent)
         logging.info("Cut command completed")
 
+    def perform_whois_command(self, notif):
+        logging.info("Performing whois command")
+        reply, parent = self.whois.start_whois(notif.content.cast)
+        self.post_thread_to_farcaster(replies=reply, parent=parent)
+        logging.info("Whois command completed")
+
     def perform_help_command(self, notif):
         logging.info("Performing help command")
         reply = (
             "Thanks for your interest in ditti bot! "
             "Tag @alexpaden for further assistance. "
-            "https://i.imgur.com/J7sh9ip.png"
+            "https://i.imgur.com/XuSem8Q.png"
         )
         parent = Parent(fid=notif.content.cast.author.fid, hash=notif.content.cast.hash)
         self.post_to_farcaster(text=reply, parent=parent)
