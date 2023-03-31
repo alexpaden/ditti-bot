@@ -1,7 +1,6 @@
 import logging
 import os
 
-from dotenv import load_dotenv
 from farcaster.models import Parent
 
 from ditti.commands.bookmark import Bookmark
@@ -13,7 +12,6 @@ from ditti.commands.thread import Thread
 from ditti.commands.translate import TranslatorBotCommand
 from ditti.commands.whois import WhoIs
 
-load_dotenv()
 
 DEV_MODE = bool(os.getenv("DEV_MODE") == "True")
 TRANSLATE_COM = "translate"
