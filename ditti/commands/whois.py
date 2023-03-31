@@ -1,13 +1,12 @@
 import logging
 import re
+
 from farcaster import Warpcast
 from farcaster.models import Parent
-from gql import gql, Client
+from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
-import asyncio
 
-
-logging.getLogger('gql').setLevel(logging.WARNING)
+logging.getLogger("gql").setLevel(logging.WARNING)
 
 
 class WhoIs:
@@ -20,7 +19,7 @@ class WhoIs:
         transport = AIOHTTPTransport(url=url)
         client = Client(transport=transport, fetch_schema_from_transport=True)
         return client
-      
+
     def create_givenENS_query(self, ens_domain):
         return f"""
         query {{
@@ -37,7 +36,7 @@ class WhoIs:
             }}
         }}
         """
-        
+
     def create_givenAddress_query(self, address):
         return f"""
         query {{
@@ -54,7 +53,7 @@ class WhoIs:
             }}
         }}
         """
-        
+
     def create_givenUsername_query(self, username):
         return f"""
         query {{
@@ -77,15 +76,15 @@ class WhoIs:
         return result
 
     def format_result(self, result):
-        wallet = result['Wallet']
-        profile_name = wallet['socials'][0]['profileName']
-        user_id = wallet['socials'][0]['userId']
-        addresses = wallet['addresses']
-        domains = wallet['domains']
+        wallet = result["Wallet"]
+        profile_name = wallet["socials"][0]["profileName"]
+        user_id = wallet["socials"][0]["userId"]
+        addresses = wallet["addresses"]
+        domains = wallet["domains"]
 
         formatted_result = f"@{profile_name} is fid {user_id}\n\n"
         formatted_result += f"They have {len(addresses)} connected addresses\n"
-        
+
         for i, address in enumerate(addresses, start=1):
             formatted_result += f"{i}. {address}\n"
 
@@ -95,7 +94,7 @@ class WhoIs:
             formatted_result += f"{i}. {domain['name']}\n"
 
         return formatted_result
-      
+
     def split_result(self, formatted_result, max_length=320):
         lines = formatted_result.split("\n")
         split_results = []
@@ -119,20 +118,20 @@ class WhoIs:
         match = re.search(pattern, call_cast.text, re.IGNORECASE)
         if match:
             word = match.group(1)
-            if word.startswith('@'):
+            if word.startswith("@"):
                 query_givenUsername = gql(self.create_givenUsername_query(word[1:]))
                 res = self.execute_query(query_givenUsername)
                 formatted_result = self.format_result(res)
-            elif word.endswith('.eth'):
+            elif word.endswith(".eth"):
                 query_givenENS = gql(self.create_givenENS_query(word))
                 res = self.execute_query(query_givenENS)
                 formatted_result = self.format_result(res)
-            elif word.startswith('0x'):
+            elif word.startswith("0x"):
                 query_givenAddress = gql(self.create_givenAddress_query(word))
                 res = self.execute_query(query_givenAddress)
                 formatted_result = self.format_result(res)
             else:
-                formatted_result= "The input does not match any of the cases."
+                formatted_result = "The input does not match any of the cases."
         else:
             if call_cast.parent_hash:
                 try:
@@ -140,13 +139,17 @@ class WhoIs:
                 except Exception as e:
                     logging.error(f"Error while getting parent cast whois: {e}")
                 parent_user = self.fcc.get_user(parent_cast.author.fid)
-                query_givenUsername = gql(self.create_givenUsername_query(parent_user.username))
+                query_givenUsername = gql(
+                    self.create_givenUsername_query(parent_user.username)
+                )
                 res = self.execute_query(query_givenUsername)
                 formatted_result = self.format_result(res)
             else:
-                text = "An error occurred. Are you providing a username, ENS, address, or replying to someone?"
+                text = (
+                    "An error occurred. Are you providing a username,"
+                    "ENS, address, or replying to someone?"
+                )
                 return text, parent
-        
+
         formatted_result = self.split_result(formatted_result)
         return formatted_result, parent
-
